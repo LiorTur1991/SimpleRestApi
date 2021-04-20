@@ -15,10 +15,10 @@ namespace SimpleRestApi.Models
         [DataMember(Name = "id")]
         public int ID { get; set; }
 
-        [DataMember(Name ="name")]
+        [DataMember(Name ="project_name")]
         public string Name { get; set; }
 
-        [DataMember(Name = "referTo")]
+        [DataMember(Name = "refer_to")]
         public string ReferTo { get; set; }
 
     }

@@ -7,16 +7,12 @@ namespace SimpleRestApi
     public class AutorizationService
     {
         private string loggedInToken;
+        private static readonly MicrosoftSqlDBService _microsoftSqlDB = MicrosoftSqlDBService.getInstance();
         private static AutorizationService instance = null;
-        private Dictionary<string, UserInfo> _userHashMap;
 
         public AutorizationService()
         {
             loggedInToken = string.Empty;
-            _userHashMap = new Dictionary<string, UserInfo> { };
-            _userHashMap.Add("TGlvciBUdXJnZW1hbjoxMjM0NTY=", new UserInfo("Lior Turgeman", "123456", "TGlvciBUdXJnZW1hbjoxMjM0NTY="));
-            _userHashMap.Add("SmFjb2IgTGV2aTo0NTY3ODk=", new UserInfo("Jacob Levi", "456789", "SmFjb2IgTGV2aTo0NTY3ODk="));
-            _userHashMap.Add("bGlvcjo5ODc=", new UserInfo("lior", "987", "bGlvcjo5ODc="));
         }
 
         public static AutorizationService getInstance()
@@ -31,22 +27,25 @@ namespace SimpleRestApi
 
         public UserInfo CheckUserToken(string user, string password)
         {
-            string encodeString = user.Replace("{", "").Replace("}", "") + ":" + password.Replace("{", "").Replace("}", "");
+            string encodeString = user + ":" + password;
             var base64 = Base64Encode(encodeString);
-            if (_userHashMap.TryGetValue(base64, out var value) && value != null)
+            var userInfo = _microsoftSqlDB.getUserInfo(base64);
+            if (userInfo != null)
             {
-                loggedInToken = value.Token;
+                loggedInToken = userInfo.Token;
             }
             else {
                 loggedInToken = string.Empty;
             }
-            return value;
+            return userInfo;
         }
 
         public bool checkIfVerify(string token,out string user)
         {
             user = string.Empty;
-            if (loggedInToken.Equals(token) && _userHashMap.TryGetValue(token, out var userInfo))
+            var userInfo = _microsoftSqlDB.getUserInfo(token);
+
+            if (loggedInToken.Equals(token) && userInfo != null)
                 user = userInfo.FullName;
             return loggedInToken.Equals(token);
         }

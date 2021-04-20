@@ -15,10 +15,10 @@ namespace SimpleRestApi.Controllers
         private static readonly AutorizationService _autorizationService = AutorizationService.getInstance();
         private static readonly MicrosoftSqlDBService _microsoftSqlDB = MicrosoftSqlDBService.getInstance();
 
-        [Route("Login")]
+        [Route("authenticate")]
         [ResponseType(typeof(User))]
         //GET api/test
-        public HttpResponseMessage Get(string user, string password)
+        public HttpResponseMessage Post(string user, string password)
         {
             HttpResponseMessage Response;
             UserInfo userInfo = _autorizationService.CheckUserToken(user, password);
@@ -32,14 +32,14 @@ namespace SimpleRestApi.Controllers
             return Response;
         }
 
-        [Route("GetProjects")]
+        [Route("info")]
         //GET api/test
         public HttpResponseMessage Get()
         {
             HttpResponseMessage Response;
             List<ProjectInfo> result = new List<ProjectInfo>();
-            var re = Request;
-            var headers = re.Headers;
+            var request = Request;
+            var headers = request.Headers;
             string token = null;
             if (headers.Contains("Authorization"))
             {
@@ -51,18 +51,15 @@ namespace SimpleRestApi.Controllers
             if (_autorizationService.checkIfVerify(token, out var userName))
             {
                 result = _microsoftSqlDB.getUserProjects(userName);
-                if (result.Count == 0)
+                if (!result.Any())
                     Response = Request.CreateResponse(HttpStatusCode.OK, "No projects refer to this user");
                 else 
                     Response = Request.CreateResponse(HttpStatusCode.OK, result);
             }
             else {
-                Response = Request.CreateResponse(HttpStatusCode.Forbidden, "Users should log in first");
+                Response = Request.CreateResponse(HttpStatusCode.Unauthorized, "Autorization Failed, Please log in first");
             }
             return Response;
         }
-
-
-
     }
 }
