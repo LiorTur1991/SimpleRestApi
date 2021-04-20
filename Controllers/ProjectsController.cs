@@ -42,19 +42,14 @@ namespace SimpleRestApi.Controllers
             var headers = request.Headers;
             string token = null;
             if (headers.Contains("Authorization"))
-            {
                 token = headers.GetValues("Authorization").First();
-            }
             else
                 Response = Request.CreateResponse(HttpStatusCode.Unauthorized, "Verify authorization header exist");
 
             if (_autorizationService.checkIfVerify(token, out var userName))
             {
                 result = _microsoftSqlDB.getUserProjects(userName);
-                if (!result.Any())
-                    Response = Request.CreateResponse(HttpStatusCode.OK, "No projects refer to this user");
-                else 
-                    Response = Request.CreateResponse(HttpStatusCode.OK, result);
+                Response = Request.CreateResponse(HttpStatusCode.OK, result);
             }
             else {
                 Response = Request.CreateResponse(HttpStatusCode.Unauthorized, "Autorization Failed, Please log in first");
