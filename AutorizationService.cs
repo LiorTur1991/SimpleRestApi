@@ -14,8 +14,8 @@ namespace SimpleRestApi
         {
             loggedInToken = string.Empty;
             _userHashMap = new Dictionary<string, UserInfo> { };
-            _userHashMap.Add("132", new UserInfo("Lior Turgeman", "123456", "132"));
-            _userHashMap.Add("456", new UserInfo("Jacob Levi", "456789", "456"));
+            _userHashMap.Add("TGlvciBUdXJnZW1hbjoxMjM0NTY=", new UserInfo("Lior Turgeman", "123456", "TGlvciBUdXJnZW1hbjoxMjM0NTY="));
+            _userHashMap.Add("SmFjb2IgTGV2aTo0NTY3ODk=", new UserInfo("Jacob Levi", "456789", "SmFjb2IgTGV2aTo0NTY3ODk="));
             _userHashMap.Add("bGlvcjo5ODc=", new UserInfo("lior", "987", "bGlvcjo5ODc="));
         }
 

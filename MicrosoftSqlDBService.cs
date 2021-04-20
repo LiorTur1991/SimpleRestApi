@@ -15,6 +15,7 @@ namespace SimpleRestApi
         public MicrosoftSqlDBService()
         {
             _connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SqlConnection"].ConnectionString);
+
         }
         public static MicrosoftSqlDBService getInstance()
         {

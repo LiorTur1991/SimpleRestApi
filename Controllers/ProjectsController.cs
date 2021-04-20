@@ -37,6 +37,7 @@ namespace SimpleRestApi.Controllers
         public HttpResponseMessage Get()
         {
             HttpResponseMessage Response;
+            List<ProjectInfo> result = new List<ProjectInfo>();
             var re = Request;
             var headers = re.Headers;
             string token = null;
@@ -44,11 +45,21 @@ namespace SimpleRestApi.Controllers
             {
                 token = headers.GetValues("Authorization").First();
             }
+            else
+                Response = Request.CreateResponse(HttpStatusCode.Unauthorized, "Verify authorization header exist");
 
-            if (_autorizationService.checkIfVerify(token,out var userName)) 
-                return _microsoftSqlDB.getUserProjects(userName);
-
-            return new List<ProjectInfo>();
+            if (_autorizationService.checkIfVerify(token, out var userName))
+            {
+                result = _microsoftSqlDB.getUserProjects(userName);
+                if (result.Count == 0)
+                    Response = Request.CreateResponse(HttpStatusCode.OK, "No projects refer to this user");
+                else 
+                    Response = Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            else {
+                Response = Request.CreateResponse(HttpStatusCode.Forbidden, "Users should log in first");
+            }
+            return Response;
         }
 
 
